@@ -1,0 +1,330 @@
+=============Marshalls PetZone===========================
+package com.automation;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+
+public class NewTest {
+	ChromeDriver driver = null;
+	
+	public static final String URL = "https://www.marshallspetzone.com";
+  @Test
+  public void mainActivity()  {
+	  int cartStatus = 0;
+	  driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+	  Actions act = new Actions(driver);
+	  act.moveToElement(driver.findElement(By.xpath("//*[@id='cbp-hrmenu']/ul/li[4]/a"))).perform();
+	  
+	  driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+	  driver.findElement(By.xpath("//*[@id='cbp-hrmenu']/ul/li[4]/div/div/div/div/div[1]/div/div/div/a")).click();
+//	  cartStatus= driver.findElement(By.xpath("//*[@id='shopping_cart_container']/div/a/div/span[5]")).getText().replaceAll("[()]", "");  //(empty)
+//	  System.out.println(cartStatus);
+//	  System.out.println(driver.findElement(By.xpath("//*[@id='shopping_cart_container']/div/a/div/span[1]")).getText());
+	  List<String> addedProducts = new ArrayList<String> ();
+	  List <String> checkOutProducts = new ArrayList<String>();
+	  List <WebElement>avProducts = driver.findElements(By.xpath("//*[@id='center_column']/ul/li/div/div[2]/div[3]/a/span[contains(text(),'Add to cart')]"));
+	  	for(WebElement we: avProducts){
+	  		we.click();
+	  		new WebDriverWait(driver, 6).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id='layer_cart_product_title']")));
+  			addedProducts.add(driver.findElement(By.xpath("//*[@id='layer_cart_product_title']")).getText().trim());
+	  		cartStatus++;
+	  		if(cartStatus==3){
+	  			driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+	  			driver.findElement(By.xpath("//*[@id='layer_cart']/div[3]/div/a/span")).click();	
+	  			break;
+	  		}
+	  		else{
+	  			driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+	  			driver.findElement(By.xpath("//*[@id='layer_cart']/div[3]/div/span/span")).click();
+	  		}
+	  	}	  	
+	  	 int i=0;
+	  	 for(i=0;i<addedProducts.size();i++){
+	  		 
+	  		checkOutProducts.add(driver.findElement(By.xpath("//tbody/tr["+(i+1)+"]/td[@class='cart_description']/p")).getText().trim());
+	  	 }
+	  	 int j=0;
+	  	 for(j=0;j<checkOutProducts.size();j++)
+	  	 {
+	  		 if(addedProducts.get(j).equals(checkOutProducts.get(j)))
+	  		 {
+	  			 System.out.println(j+"  Product Verified");
+	  		 }
+	  	 }
+	  }
+  
+  @BeforeClass
+  public void invoker() {
+	  System.setProperty("webdriver.chrome.driver", "./Driver/chromedriver.exe");
+	  driver = new ChromeDriver();
+	  driver.manage().window().maximize();
+	  driver.get(URL);
+  }
+
+  @AfterClass
+  public void closer() {
+	 driver.quit();
+  }
+
+}
+
+
+============GoIbibo======================================
+
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.concurrent.TimeUnit;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+public class AutomationTestGoIbibo {
+
+	public static void main(String[] args) throws Exception {
+		String departDate = "28-February 2019" ;
+		String arrDate = "24-March 2019";
+		String div [] = new String [2];
+		String div2 [] = new String [2];
+		div  = departDate.split("-");
+		div2 = arrDate.split("-");
+		String day = null;
+		String month_year =null;
+		String day2 = null;
+		String month_year2 =null;
+	    day= div[0];
+	    day2=div2[0];
+		month_year = div[1];
+		month_year2=div2[1];
+		String m2[]=new String[62];
+		String m3[] = new String[62];
+		// TODO Auto-generated method stub
+		System.setProperty("webdriver.chrome.driver","./drivers/Driver/chromedriver.exe");
+		//driver.manage().window().maximize();
+		ChromeDriver driver=new ChromeDriver();
+		driver.manage().window().maximize();
+		driver.get("https://www.goibibo.com/");
+        Thread.sleep(3000);
+//		driver.findElement(By.id("gi_roundtrip_label")).click();
+        driver.findElement(By.xpath("//*[@id='content']/div/div[2]/div/div[1]/div[2]/div[2]/div/span[2]")).click();
+        System.out.println("clicked");
+		Thread.sleep(3000);
+//		WebElement frm= driver.findElementById("gosuggest_inputSrc");
+		driver.findElementById("gosuggest_inputSrc").sendKeys("Indore (IDR)");
+		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+		driver.findElement(By.xpath("//*[@id='react-autosuggest-1']/li[1]")).click();
+		System.out.println("FROM");
+		Thread.sleep(3000);
+		driver.findElementById("gosuggest_inputDest").sendKeys("Bhopal (BHO)");
+		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+		driver.findElement(By.xpath("//*[@id='react-autosuggest-1']/li[1]")).click();
+//		List <WebElement> frm = driver.findElements(By.id("react-autosuggest-1"));
+//		String from[] = new String [100]; 
+//		for(WebElement sd:frm){
+//	          from=sd.getText().split("\\r?\\n");
+//	          for(int i=0;i<from.length;i++){
+//	        	System.out.println(from[i]);
+//	        	  if(from[i].toLowerCase().startsWith("pune")){
+//	        		 System.out.println(from[i]);
+//	        		 sd.click(); 
+//	        		 break;
+//	        	 }
+//	          }
+//			} 
+
+		
+		
+//		for(WebElement fr: frm)
+//		{
+//			System.out.println(fr.getText());
+//			if(fr.getText().contains("Indore (IDR)"))
+//			{
+//				fr.click();
+//				break;
+//			}
+//		}
+	
+
+
+		
+		
+		
+		
+		
+		
+		System.out.println("TO");
+		Thread.sleep(3000);
+//		driver.findElement(By.xpath
+//				("//*[@id='searchWidgetCommon']/div/div[3]/div[1]/div[1]/div/input")).click();
+		driver.findElement(By.xpath("//*[@id='searchWidgetCommon']/div[1]/div[1]/div[1]/div/div[5]/input")).click();
+		Thread.sleep(2000);
+		checkIn(driver,day,month_year,m2);
+		System.out.println("Depart date selected");
+//		driver.findElement(By.xpath
+//				("//*[@id='searchWidgetCommon']/div/div[4]/div[1]/div[2]/div/input[1]")).click();
+		Thread.sleep(2000);
+		checkOut(driver,day2,month_year2,m3);
+		System.out.println("Return date selected");
+		
+		driver.findElementById("pax_link_common").click();
+		System.out.println("clicked on travellers");
+		driver.findElementById("adultPaxPlus").click();
+		System.out.println("clicked on adult ");
+		driver.findElementById("childPaxPlus").click();
+		System.out.println("clicked on child");
+		driver.findElementById("infantPaxPlus").click();
+		System.out.println("clicked on infant");
+		driver.findElementById("pax_close").click();
+		
+		Select travelClass = new Select(driver.findElementById("gi_class"));
+		travelClass.selectByVisibleText("Economy");
+		driver.findElementById("gi_search_btn").click();
+		Thread.sleep(3000);
+//		driver.findElementById("sortByPriceOnw").click();
+//		Thread.sleep(3000);
+//		driver.findElementById("sortByPriceRet").click();
+//		Thread.sleep(2000);
+		
+//		driver.findElements(By.xpath("//div[@id='onwFltContainer']/div/div/div/div/span[normalize-space()]"));   //getting all the prices from left side
+//		driver.findElement(By.xpath("//div[@id='retFltContainer']/div/div/div/div/span[normalize-space()]"));       //getting all prices form right side
+		driver.findElement(By.xpath("//*[@id='fltTcktVoucher']/div[3]/div/div[2]/input")).click();;							// Book button
+	}
+		
+		
+		public static void checkIn(ChromeDriver driver,String day, String month_year,String m2[]) throws Exception
+		{
+			WebElement element =null;
+		List <WebElement> monthelement = driver.findElements
+				(By.xpath("//div[@class='DayPicker DayPicker--en']/div[@class='DayPicker-Month']/div[@class='DayPicker-Caption']"));
+					
+					for(int i=0;i<monthelement.size();i++)
+					{
+						System.out.println(monthelement.get(i).getText());
+					if(monthelement.get(i).getText().equalsIgnoreCase(month_year))
+					{
+						System.out.println("INSIDE IF Condition and value of i is "+i);
+					 List <WebElement> monthdays = driver.findElements(
+						By.xpath("*//div[@class='DayPicker DayPicker--en']/div[@class='DayPicker-Month']["+(i+1)+"]/div[@class='DayPicker-Body']/div/div[normalize-space()]/div"));
+					// System.out.println("month days stored in list");			 
+//					 System.out.println("got ele -->"+monthdays.get(2).getText());
+//					 System.out.println(day.hashCode());
+					 for(WebElement d : monthdays)
+					 {	
+								// System.out.println(d.getText().toString());
+					 				m2=d.getText().split("\\r?\\n");
+					 				for (int j=0;j<m2.length;j++)
+					 				{
+					 				//System.out.println(m2[j]);
+						 			if(m2[j].equals(day))
+					 			{
+						 				 boolean result = false;
+						 			    int attempts = 0;
+						 			    while(attempts < 5) {
+						 			        try {
+						 			           d.click();
+						 			            result = true;
+						 			            break;
+						 			        } catch(StaleElementReferenceException e) {
+						 			        	
+						 			        }
+						 			        attempts++;
+						 			    }
+						 			    return ;
+						 			
+					 				//System.out.println("inside equals day");	
+					 			}
+					 	}
+
+					}
+					}
+					else
+					{
+						//driver.manage().timeouts().implicitlyWait(10,TimeUnit.SECONDS);
+						//Thread.sleep(5000);
+						new WebDriverWait(driver,30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[contains(@class,'DayPicker-NavButton DayPicker-NavButton--next')]"))).click();
+						new WebDriverWait(driver,30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[contains(@class,'DayPicker-NavButton DayPicker-NavButton--next')]"))).click();
+//						driver.findElement(By.xpath("//*[@id='searchWidgetCommon']/div/div[4]/div[1]/div[1]/div/div/div/div[1]/span")).click();
+//						driver.findElement(By.xpath("//*[@id='searchWidgetCommon']/div/div[4]/div[1]/div[1]/div/div/div/div[1]/span[2]")).click();
+						checkIn(driver,day,month_year,m2);
+					}
+					}
+		}
+		
+		
+		public static void checkOut(ChromeDriver driver,String day2, String month_year2,String m3[]) throws InterruptedException
+		{
+			WebElement element =null;
+		List <WebElement> monthelement = driver.findElements
+				(By.xpath("//div[@class='DayPicker DayPicker--en']/div[@class='DayPicker-Month']/div[@class='DayPicker-Caption']"));
+					
+					for(int i=0;i<monthelement.size();i++)
+					{
+						System.out.println(monthelement.get(i).getText());
+					if(monthelement.get(i).getText().equalsIgnoreCase(month_year2))
+					{
+						System.out.println("INSIDE IF Condition and value of i is "+i);
+					 List <WebElement> monthdays = driver.findElements(
+						By.xpath("*//div[@class='DayPicker DayPicker--en']/div[@class='DayPicker-Month']["+(i+1)+"]/div[@class='DayPicker-Body']/div/div[normalize-space()]/div"));
+					 System.out.println("month days for return stored in list");			 
+//					 System.out.println("got ele -->"+monthdays.get(2).getText());
+//					 System.out.println(day2.hashCode());
+					 for(WebElement d : monthdays)
+					 {	
+								// System.out.println(d.getText().toString());
+					 				m3=d.getText().split("\\r?\\n");
+					 				for (int j=0;j<m3.length;j++)
+					 				{
+					 				//System.out.println(m2[j]);
+						 			if(m3[j].equals(day2))
+					 			{boolean result = false;
+				 			    int attempts = 0;
+				 			    while(attempts < 2) {
+				 			        try {
+				 			           d.click();
+				 			            result = true;
+				 			            break;
+				 			        } catch(StaleElementReferenceException e) {
+				 			        	
+				 			        }
+				 			        attempts++;
+				 			    }
+				 			    return ;
+//						 				d.click();
+					 				//System.out.println("inside equals day");	
+					 			}
+					 				}
+
+					}
+					}
+					else
+					{
+						//driver.manage().timeouts().implicitlyWait(10,TimeUnit.SECONDS);
+						//Thread.sleep(5000);
+						new WebDriverWait(driver,30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[contains(@class,'DayPicker-NavButton DayPicker-NavButton--next')]"))).click();
+						new WebDriverWait(driver,30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[contains(@class,'DayPicker-NavButton DayPicker-NavButton--next')]"))).click();
+//						driver.findElement(By.xpath("//*[@id='searchWidgetCommon']/div/div[4]/div[1]/div[1]/div/div/div/div[1]/span")).click();
+//						driver.findElement(By.xpath("//*[@id='searchWidgetCommon']/div/div[4]/div[1]/div[1]/div/div/div/div[1]/span[2]")).click();
+						checkOut( driver,day2,month_year2,m3);
+					}
+					}
+		}
+		
+}
+
+
+=============================================================
